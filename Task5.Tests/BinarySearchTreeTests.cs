@@ -1,13 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Task1;
 
 namespace Task5.Tests
 {
     public class BinarySearchTreeTests
     {
-        #region Point
+        #region Comparers
+
+        public static int IntegerComparer(int integer1, int integer2) => integer1 - integer2;
+
+        public static int StringComparer(string string1, string string2) => string1.Length - string2.Length;
+
+        public static int BookComparer(Book book1, Book book2) => book1.Edition - book2.Edition;
 
         public struct Point
         {
@@ -29,18 +34,24 @@ namespace Task5.Tests
 
         private static readonly BinarySearchTree<int> Integers =
            new BinarySearchTree<int>(new List<int> { 5, -6, 10, 7, 18 }, Comparer<int>.Default);
+        private static readonly BinarySearchTree<int> IntegersWithComparer =
+            new BinarySearchTree<int>(new List<int> {5, -6, 10, 7, 18}, IntegerComparer);
 
         private static readonly BinarySearchTree<string> Strings =
             new BinarySearchTree<string>(new List<string> { "liquor", "honey", "whiskey", "kitty", "melody" }, Comparer<string>.Default);
+        private static readonly BinarySearchTree<string> StringsWithComparer =
+            new BinarySearchTree<string>(new List<string> { "liquor", "honey", "whiskey", "kitty", "melody" }, StringComparer);
 
         private static readonly Book Book1 =
-            new Book("The master and Margarita", "M.A.Bulgakov", 5, "Mysticism", "YMCA Press");
+            new Book("The master and Margarita", "M.A.Bulgakov", 10, "Mysticism", "YMCA Press");
         private static readonly Book Book2 =
             new Book("Harry Potter and the Chamber of Secrets", "J.K.Rowling", 3, "Fantasy", "Bloomsbury Publishing");
         private static readonly Book Book3 =
-            new Book("Romeo and Juliet", "W.Shakespeare", 10, "Tragedy", "Thomas Creede");
+            new Book("Romeo and Juliet", "W.Shakespeare", 5, "Tragedy", "Thomas Creede");
         private static readonly BinarySearchTree<Book> Books =
             new BinarySearchTree<Book>(new List<Book> { Book1, Book2, Book3 }, Comparer<Book>.Default);
+        private static readonly BinarySearchTree<Book> BooksWithComparer =
+           new BinarySearchTree<Book>(new List<Book> { Book1, Book2, Book3 }, BookComparer);
 
         private static readonly Point Point1 = new Point(10, 18);
         private static readonly Point Point2 = new Point(7, -5);
@@ -88,9 +99,24 @@ namespace Task5.Tests
             List<int> expected) => Assert.AreEqual(expected, source.GetEnumeratorPostorder());
 
         [Test, TestCaseSource(typeof(TestsData),
-           nameof(TestsData.InorderStrings))]
+            nameof(TestsData.InorderIntegersWithComparer))]
+        public void InorderIntegersWithComparerTests(BinarySearchTree<int> source,
+            List<int> expected) => Assert.AreEqual(expected, source.GetEnumeratorInorder());
+
+        [Test, TestCaseSource(typeof(TestsData),
+            nameof(TestsData.PreorderIntegersWithComparer))]
+        public void PreorderIntegersWithComparerTests(BinarySearchTree<int> source,
+            List<int> expected) => Assert.AreEqual(expected, source.GetEnumeratorPreorder());
+
+        [Test, TestCaseSource(typeof(TestsData),
+            nameof(TestsData.PostorderIntegersWithComparer))]
+        public void PostorderIntegersWithComparerTests(BinarySearchTree<int> source,
+            List<int> expected) => Assert.AreEqual(expected, source.GetEnumeratorPostorder());
+
+        [Test, TestCaseSource(typeof(TestsData),
+          nameof(TestsData.InorderStrings))]
         public void InorderStringsTests(BinarySearchTree<string> source,
-           List<string> expected) => Assert.AreEqual(expected, source.GetEnumeratorInorder());
+          List<string> expected) => Assert.AreEqual(expected, source.GetEnumeratorInorder());
 
         [Test, TestCaseSource(typeof(TestsData),
            nameof(TestsData.PreorderStrings))]
@@ -100,6 +126,21 @@ namespace Task5.Tests
         [Test, TestCaseSource(typeof(TestsData),
            nameof(TestsData.PostorderStrings))]
         public void PostorderStringsTests(BinarySearchTree<string> source,
+           List<string> expected) => Assert.AreEqual(expected, source.GetEnumeratorPostorder());
+
+        [Test, TestCaseSource(typeof(TestsData),
+           nameof(TestsData.InorderStringsWithComparer))]
+        public void InorderStringsWithComparerTests(BinarySearchTree<string> source,
+           List<string> expected) => Assert.AreEqual(expected, source.GetEnumeratorInorder());
+
+        [Test, TestCaseSource(typeof(TestsData),
+           nameof(TestsData.PreorderStringsWithComparer))]
+        public void PreorderStringsWithComparerTests(BinarySearchTree<string> source,
+           List<string> expected) => Assert.AreEqual(expected, source.GetEnumeratorPreorder());
+
+        [Test, TestCaseSource(typeof(TestsData),
+           nameof(TestsData.PostorderStringsWithComparer))]
+        public void PostorderStringsWithComparerTests(BinarySearchTree<string> source,
            List<string> expected) => Assert.AreEqual(expected, source.GetEnumeratorPostorder());
 
         [Test, TestCaseSource(typeof(TestsData),
@@ -115,6 +156,21 @@ namespace Task5.Tests
         [Test, TestCaseSource(typeof(TestsData),
            nameof(TestsData.PostorderBooks))]
         public void PostorderBooksTests(BinarySearchTree<Book> source,
+           List<Book> expected) => Assert.AreEqual(expected, source.GetEnumeratorPostorder());
+
+        [Test, TestCaseSource(typeof(TestsData),
+           nameof(TestsData.InorderBooksWithComparer))]
+        public void InorderBooksWithComparerTests(BinarySearchTree<Book> source,
+           List<Book> expected) => Assert.AreEqual(expected, source.GetEnumeratorInorder());
+
+        [Test, TestCaseSource(typeof(TestsData),
+           nameof(TestsData.PreorderBooksWithComparer))]
+        public void PreorderBooksWithComparerTests(BinarySearchTree<Book> source,
+           List<Book> expected) => Assert.AreEqual(expected, source.GetEnumeratorPreorder());
+
+        [Test, TestCaseSource(typeof(TestsData),
+           nameof(TestsData.PostorderBooksWithComparer))]
+        public void PostorderBooksWithComparerTests(BinarySearchTree<Book> source,
            List<Book> expected) => Assert.AreEqual(expected, source.GetEnumeratorPostorder());
 
         [Test, TestCaseSource(typeof(TestsData),
@@ -152,6 +208,20 @@ namespace Task5.Tests
                 get { yield return new TestCaseData(Integers, IntegersPostorder); }
             }
 
+            public static IEnumerable InorderIntegersWithComparer
+            {
+                get { yield return new TestCaseData(Integers, IntegersInorder); }
+            }
+
+            public static IEnumerable PreorderIntegersWithComparer
+            {
+                get { yield return new TestCaseData(Integers, IntegersPreorder); }
+            }
+            public static IEnumerable PostorderIntegersWithComparer
+            {
+                get { yield return new TestCaseData(Integers, IntegersPostorder); }
+            }
+
             public static IEnumerable InorderStrings
             {
                 get { yield return new TestCaseData(Strings, StringsInorder); }
@@ -167,6 +237,21 @@ namespace Task5.Tests
                 get { yield return new TestCaseData(Strings, StringsPostorder); }
             }
 
+            public static IEnumerable InorderStringsWithComparer
+            {
+                get { yield return new TestCaseData(Strings, StringsInorder); }
+            }
+
+            public static IEnumerable PreorderStringsWithComparer
+            {
+                get { yield return new TestCaseData(Strings, StringsPreorder); }
+            }
+
+            public static IEnumerable PostorderStringsWithComparer
+            {
+                get { yield return new TestCaseData(Strings, StringsPostorder); }
+            }
+
             public static IEnumerable InorderBooks
             {
                 get { yield return new TestCaseData(Books, BooksInorder); }
@@ -178,6 +263,21 @@ namespace Task5.Tests
             }
 
             public static IEnumerable PostorderBooks
+            {
+                get { yield return new TestCaseData(Books, BooksPostorder); }
+            }
+
+            public static IEnumerable InorderBooksWithComparer
+            {
+                get { yield return new TestCaseData(Books, BooksInorder); }
+            }
+
+            public static IEnumerable PreorderBooksWithComparer
+            {
+                get { yield return new TestCaseData(Books, BooksPreorder); }
+            }
+
+            public static IEnumerable PostorderBooksWithComparer
             {
                 get { yield return new TestCaseData(Books, BooksPostorder); }
             }
